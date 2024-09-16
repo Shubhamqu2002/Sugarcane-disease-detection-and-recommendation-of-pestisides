@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Sugarcane Disease Prediction</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #3498db; /* Soft blue background */
+            margin: 0;
+        }
+
+        .container {
+            text-align: center;
+            background: #ffffff; /* White background */
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.15);
+        }
+
+        h1 {
+            color: #333333;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        input[type="file"] {
+            display: block;
+            margin: 20px auto;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        input[type="submit"] {
+            background-color: #4CAF50; /* Green button */
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #eafaf1; /* Light green background */
+            border: 1px solid #b5e7c1;
+            border-radius: 10px;
+            display: none;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .result p {
+            margin-bottom: 10px;
+        }
+
+        .result strong {
+            font-weight: bold;
+            color: #333333;
+        }
+
+        .box {
+            background-color: #f0f0f0; /* Light gray background */
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .box h2 {
+            margin-top: 0;
+            font-weight: bold;
+            color: #333333;
+        }
+
+        .preview {
+            margin-top: 20px;
+        }
+
+        .preview img {
+            max-width: 100%;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Sugarcane Disease Prediction System</h1>
+        <div class="box">
+            <h2>Upload Image</h2>
+            <form id="upload-form" action="/predict" method="post" enctype="multipart/form-data">
+                <input type="file" name="file" id="file-input" required>
+                <input type="submit" value="Upload and Predict">
+            </form>
+            <div class="preview" id="image-preview"></div>
+        </div>
+        <div class="result" id="result">
+            <p><strong>Prediction:</strong> <span id="prediction"></span></p>
+            <p><strong>Suggestion:</strong> <span id="suggestion"></span></p>
+            <p><strong>Pesticides:</strong> <span id="pesticides"></span></p>
+        </div>
+    </div>
+    <script>
+        document.getElementById('file-input').addEventListener('change', function (event) {
+            var preview = document.getElementById('image-preview');
+            preview.innerHTML = '';
+            var file = event.target.files[0];
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                var img = document.createElement('img');
+                img.src = e.target.result;
+                preview.appendChild(img);
+            };
+            reader.readAsDataURL(file);
+        });
+
+        document.getElementById('upload-form').addEventListener('submit', function (event) {
+            event.preventDefault();
+            var formData = new FormData(this);
+            fetch('/predict', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                var resultDiv = document.getElementById('result');
+                document.getElementById('prediction').innerText = data.prediction;
+                document.getElementById('suggestion').innerText = data.suggestion;
+                document.getElementById('pesticides').innerText = data.pesticides;
+                resultDiv.style.display = 'block';
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    </script>
+</body>
+
+</html>
