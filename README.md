@@ -1,0 +1,1 @@
+# Sugarcane-disease-detection-and-recommendation-of-pestisides
